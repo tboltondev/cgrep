@@ -7,28 +7,6 @@
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-char *get_filename() {
-  char *filename = malloc(255);
-  if (!filename)
-    return NULL;
-
-  printf("File: ");
-  scanf("%s", filename);
-
-  return filename;
-}
-
-char *get_searchterm() {
-  char *searchterm = malloc(100);
-  if (!searchterm)
-    return NULL;
-
-  printf("Search for: ");
-  scanf("%s", searchterm);
-
-  return searchterm;
-}
-
 void search_file(char searchterm[], char filename[]) {
   FILE *file = fopen(filename, "r");
   char line[255];
@@ -59,14 +37,12 @@ void search_file(char searchterm[], char filename[]) {
   }
 }
 
-int main() {
-  char *fname = get_filename();
-  char *searchterm = get_searchterm();
+int main(int argc, char *argv[]) {
+  char *pattern = argv[1];
+  char *file = argv[2];
 
-  if (fname && searchterm) {
-    search_file(searchterm, fname);
+  if (file && pattern) {
+    // TODO: handle directories
+    search_file(pattern, file);
   }
-
-  free(fname);
-  free(searchterm);
 }
