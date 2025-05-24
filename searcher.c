@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/syslimits.h>
 #include "searcher.h"
 #include "search_result.h"
+#include "file_utils.h"
 
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -56,8 +59,48 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
   }
 }
 
+void search_dir_recursively(char *pattern, char *base_path, int current_depth, int max_depth) {
+    if (current_depth > max_depth) return;
+
+    DIR *dir = opendir(base_path);
+    if (dir == NULL) {
+        printf("Error opening directory %s\n", base_path);
+        return;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+
+        char path[PATH_MAX];
+        snprintf(path, sizeof(path), "%s/%s", base_path, entry->d_name);
+
+        if (is_dir(path)) {
+            search_dir_recursively(pattern, path, current_depth + 1, max_depth);
+        } else if (is_file(path)) {
+            SearchResult sr = create_search_result(10);
+            search_file(&sr, pattern, path);
+            print_search_result(sr);
+        }
+    }
+    closedir(dir);
+}
+
+void search(char *pattern, char *path) {
+    const int MAX_DEPTH = 1000;
+
+    if (is_dir(path)) {
+        search_dir_recursively(pattern, path, 0, MAX_DEPTH);
+    } else if (is_file(path)) {
+        // TODO: pass callback, this is repeated above
+        SearchResult sr = create_search_result(10);
+        search_file(&sr, pattern, path);
+        print_search_result(sr);
+    }
+}
+
 // int main() {
 //   SearchResult sr = create_search_result(10);
 //   search_file(&sr, "hello", "./test");
-//   print_search_result(&sr);
+//   print_search_result(sr);
 // }
