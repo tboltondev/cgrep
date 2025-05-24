@@ -14,7 +14,7 @@
 void search_file(SearchResult *sr, char *pattern, char *path) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
-    printf("Error opening file %s\n", path); // TODO: return error codes
+    printf("Error opening file %s\n", path);
   }
 
   char line[300]; // Max chars in line, maybe make dynamic
