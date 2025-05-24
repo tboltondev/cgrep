@@ -59,6 +59,16 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
   }
 }
 
+void handle_search_file(char *pattern, char *path) {
+    SearchResult sr = create_search_result(10, path);
+    search_file(&sr, pattern, path);
+
+    if (sr.count > 0)
+      print_search_result(sr);
+
+    free_search_result(&sr);
+}
+
 void search_dir_recursively(char *pattern, char *base_path, int current_depth,
                             int max_depth) {
   if (current_depth > max_depth) {
@@ -83,26 +93,18 @@ void search_dir_recursively(char *pattern, char *base_path, int current_depth,
     if (is_dir(path)) {
       search_dir_recursively(pattern, path, current_depth + 1, max_depth);
     } else if (is_file(path)) {
-      SearchResult sr = create_search_result(10, path);
-      search_file(&sr, pattern, path);
-      if (sr.count > 0)
-        print_search_result(sr);
+      handle_search_file(pattern, path);
     }
   }
   closedir(dir);
 }
 
-void search(char *pattern, char *path) {
+void search(char *pattern, char *path, ResultHandler result_handler) {
   const int MAX_DEPTH = 1000;
 
   if (is_dir(path)) {
     search_dir_recursively(pattern, path, 0, MAX_DEPTH);
   } else if (is_file(path)) {
-    // TODO: pass callback, this is repeated above
-    SearchResult sr = create_search_result(10, path);
-    search_file(&sr, pattern, path);
-
-    if (sr.count > 0)
-      print_search_result(sr);
+    handle_search_file(pattern, path);
   }
 }
