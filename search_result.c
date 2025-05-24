@@ -2,12 +2,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct {
-  char **lines;
-  size_t count;
-  size_t capacity;
-} SearchResult;
+#include "search_result.h"
 
 SearchResult create_search_result(size_t initial_capacity) {
   SearchResult search_result;
@@ -28,7 +23,7 @@ void add_to_search_result(SearchResult *sr, char *line) {
 
 void print_search_result(SearchResult *sr) {
   for (int i = 0; i < sr->count; i++) {    
-    printf("%s\n", sr->lines[i]);
+    printf("%s", sr->lines[i]);
   }
 }
 
