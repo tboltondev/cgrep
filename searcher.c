@@ -104,9 +104,3 @@ void search(char *pattern, char *path) {
             print_search_result(sr);
     }
 }
-
-// int main() {
-//   SearchResult sr = create_search_result(10);
-//   search_file(&sr, "hello", "./test");
-//   print_search_result(sr);
-// }

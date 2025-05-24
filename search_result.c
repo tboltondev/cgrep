@@ -41,14 +41,3 @@ void free_search_result(SearchResult *sr) {
   }
   free(sr->lines);
 }
-
-// int main() {
-//   SearchResult sr = create_search_result(4);
-
-//   add_to_search_result(&sr, "abc");
-//   add_to_search_result(&sr, "def");
-
-//   print_search_result(sr);
-
-//   free_search_result(&sr);
-// }
