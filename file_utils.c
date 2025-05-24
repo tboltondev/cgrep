@@ -18,4 +18,3 @@ int is_file(const char *path) {
   }
   return S_ISREG(statbuf.st_mode);
 }
-

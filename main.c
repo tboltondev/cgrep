@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "searcher.h"
+#include <stdio.h>
 
 int main(int argc, char *argv[]) {
   // TODO: arg parser

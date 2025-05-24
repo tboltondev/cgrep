@@ -1,14 +1,14 @@
+#include "searcher.h"
+#include "file_utils.h"
+#include "search_result.h"
+#include <dirent.h>
 #include <stdio.h>
 #include <string.h>
-#include <dirent.h>
 #include <sys/syslimits.h>
-#include "searcher.h"
-#include "search_result.h"
-#include "file_utils.h"
 
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_COLOR_GREEN "\x1b[32m"
+#define ANSI_COLOR_RED "\x1b[31m"
+#define ANSI_COLOR_RESET "\x1b[0m"
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
 void search_file(SearchResult *sr, char *pattern, char *path) {
@@ -34,12 +34,12 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
       int offset = 0;
 
       // TODO: colors shouldnt be part of this
-      offset +=
-          snprintf(matched_line + offset, buffer_size - offset, ANSI_COLOR_GREEN);
-      offset +=
-          snprintf(matched_line + offset, buffer_size - offset, "%i:", line_num);
-      offset +=
-          snprintf(matched_line + offset, buffer_size - offset, ANSI_COLOR_RESET);
+      offset += snprintf(matched_line + offset, buffer_size - offset,
+                         ANSI_COLOR_GREEN);
+      offset += snprintf(matched_line + offset, buffer_size - offset,
+                         "%i:", line_num);
+      offset += snprintf(matched_line + offset, buffer_size - offset,
+                         ANSI_COLOR_RESET);
       offset +=
           snprintf(matched_line + offset, buffer_size - offset, "%.*s",
                    matched_position, line); // part of line before first match
@@ -47,8 +47,8 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
           snprintf(matched_line + offset, buffer_size - offset, ANSI_COLOR_RED);
       offset += snprintf(matched_line + offset, buffer_size - offset, "%.*s",
                          match_length, &line[matched_position]); // first match
-      offset +=
-          snprintf(matched_line + offset, buffer_size - offset, ANSI_COLOR_RESET);
+      offset += snprintf(matched_line + offset, buffer_size - offset,
+                         ANSI_COLOR_RESET);
       offset +=
           snprintf(matched_line + offset, buffer_size - offset, "%s",
                    &line[matched_position + match_length]); // remainder of line
@@ -59,48 +59,50 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
   }
 }
 
-void search_dir_recursively(char *pattern, char *base_path, int current_depth, int max_depth) {
-    if (current_depth > max_depth) {
-        printf("Reached max directory depth\n");
-        return;
+void search_dir_recursively(char *pattern, char *base_path, int current_depth,
+                            int max_depth) {
+  if (current_depth > max_depth) {
+    printf("Reached max directory depth\n");
+    return;
+  }
+
+  DIR *dir = opendir(base_path);
+  if (dir == NULL) {
+    printf("Error opening directory %s\n", base_path);
+    return;
+  }
+
+  struct dirent *entry;
+  while ((entry = readdir(dir)) != NULL) {
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+      continue;
+
+    char path[PATH_MAX];
+    snprintf(path, sizeof(path), "%s/%s", base_path, entry->d_name);
+
+    if (is_dir(path)) {
+      search_dir_recursively(pattern, path, current_depth + 1, max_depth);
+    } else if (is_file(path)) {
+      SearchResult sr = create_search_result(10, path);
+      search_file(&sr, pattern, path);
+      if (sr.count > 0)
+        print_search_result(sr);
     }
-
-    DIR *dir = opendir(base_path);
-    if (dir == NULL) {
-        printf("Error opening directory %s\n", base_path);
-        return;
-    }
-
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-
-        char path[PATH_MAX];
-        snprintf(path, sizeof(path), "%s/%s", base_path, entry->d_name);
-
-        if (is_dir(path)) {
-            search_dir_recursively(pattern, path, current_depth + 1, max_depth);
-        } else if (is_file(path)) {
-            SearchResult sr = create_search_result(10, path);
-            search_file(&sr, pattern, path);
-            if (sr.count > 0)
-                print_search_result(sr);
-        }
-    }
-    closedir(dir);
+  }
+  closedir(dir);
 }
 
 void search(char *pattern, char *path) {
-    const int MAX_DEPTH = 1000;
+  const int MAX_DEPTH = 1000;
 
-    if (is_dir(path)) {
-        search_dir_recursively(pattern, path, 0, MAX_DEPTH);
-    } else if (is_file(path)) {
-        // TODO: pass callback, this is repeated above
-        SearchResult sr = create_search_result(10, path);
-        search_file(&sr, pattern, path);
+  if (is_dir(path)) {
+    search_dir_recursively(pattern, path, 0, MAX_DEPTH);
+  } else if (is_file(path)) {
+    // TODO: pass callback, this is repeated above
+    SearchResult sr = create_search_result(10, path);
+    search_file(&sr, pattern, path);
 
-        if (sr.count > 0)
-            print_search_result(sr);
-    }
+    if (sr.count > 0)
+      print_search_result(sr);
+  }
 }
