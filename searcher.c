@@ -9,7 +9,6 @@
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
 void search_file(SearchResult *sr, char *pattern, char *path) {
@@ -34,6 +33,7 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
       int buffer_size = sizeof(matched_line);
       int offset = 0;
 
+      // TODO: colors shouldnt be part of this
       offset +=
           snprintf(matched_line + offset, buffer_size - offset, ANSI_COLOR_GREEN);
       offset +=
@@ -60,7 +60,10 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
 }
 
 void search_dir_recursively(char *pattern, char *base_path, int current_depth, int max_depth) {
-    if (current_depth > max_depth) return;
+    if (current_depth > max_depth) {
+        printf("Reached max directory depth\n");
+        return;
+    }
 
     DIR *dir = opendir(base_path);
     if (dir == NULL) {
@@ -78,9 +81,10 @@ void search_dir_recursively(char *pattern, char *base_path, int current_depth, i
         if (is_dir(path)) {
             search_dir_recursively(pattern, path, current_depth + 1, max_depth);
         } else if (is_file(path)) {
-            SearchResult sr = create_search_result(10);
+            SearchResult sr = create_search_result(10, path);
             search_file(&sr, pattern, path);
-            print_search_result(sr);
+            if (sr.count > 0)
+                print_search_result(sr);
         }
     }
     closedir(dir);
@@ -93,9 +97,11 @@ void search(char *pattern, char *path) {
         search_dir_recursively(pattern, path, 0, MAX_DEPTH);
     } else if (is_file(path)) {
         // TODO: pass callback, this is repeated above
-        SearchResult sr = create_search_result(10);
+        SearchResult sr = create_search_result(10, path);
         search_file(&sr, pattern, path);
-        print_search_result(sr);
+
+        if (sr.count > 0)
+            print_search_result(sr);
     }
 }
 
