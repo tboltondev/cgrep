@@ -21,9 +21,9 @@ void add_to_search_result(SearchResult *sr, char *line) {
   sr->count++;
 }
 
-void print_search_result(SearchResult *sr) {
-  for (int i = 0; i < sr->count; i++) {    
-    printf("%s", sr->lines[i]);
+void print_search_result(SearchResult sr) {
+  for (int i = 0; i < sr.count; i++) {    
+    printf("%s", sr.lines[i]);
   }
 }
 
@@ -40,7 +40,7 @@ void free_search_result(SearchResult *sr) {
 //   add_to_search_result(&sr, "abc");
 //   add_to_search_result(&sr, "def");
 
-//   print_search_result(&sr);
+//   print_search_result(sr);
 
 //   free_search_result(&sr);
 // }
