@@ -1,3 +1,4 @@
+#include "output_handler.h"
 #include "searcher.h"
 #include <stdio.h>
 
@@ -9,5 +10,5 @@ int main(int argc, char *argv[]) {
 
   char *path = argv[2] == NULL ? "." : argv[2];
 
-  search(pattern, path);
+  search(pattern, path, to_stdout);
 }
