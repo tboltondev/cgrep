@@ -1,4 +1,4 @@
-#include "../include/output_handler.h"
+#include "../include/output_handler.h" // TODO: find out why absolute includes are not working
 #include "../include/searcher.h"
 #include <stdio.h>
 

@@ -18,17 +18,14 @@ void free_matched_line(MatchedLine *matched_line);
 
 typedef struct {
   char path[PATH_MAX];
-  char **lines;
-  MatchedLine *lines_;
+  MatchedLine *lines;
   size_t count;
   size_t capacity;
 } SearchResult;
 
 SearchResult create_search_result(size_t initial_capacity, char *path);
 
-void add_to_search_result(SearchResult *sr, char *line);
-
-void _add_to_search_result(SearchResult *sr, MatchedLine line);
+void add_to_search_result(SearchResult *sr, MatchedLine line);
 
 void print_search_result(SearchResult sr);
 

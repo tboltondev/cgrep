@@ -14,7 +14,7 @@ MatchedLine create_matched_line(char *line, char *match, int line_num) {
   strcpy(matched_line.line, line);
   matched_line.line_num = line_num;
   matched_line.line_len = strlen(line);
-  matched_line.match_position = match - line; // TODO: might not work
+  matched_line.match_position = match - line;
   matched_line.match_len = strlen(match);
   return matched_line;
 }
@@ -26,28 +26,18 @@ void free_matched_line(MatchedLine *matched_line) {
 SearchResult create_search_result(size_t initial_capacity, char *path) {
   SearchResult sr;
   strcpy(sr.path, path);
-  sr.lines = malloc(initial_capacity * sizeof(char *));
-  sr.lines_ = malloc(initial_capacity * sizeof(MatchedLine *));
+  sr.lines = malloc(initial_capacity * sizeof(MatchedLine));
   sr.count = 0;
   sr.capacity = initial_capacity;
   return sr;
 }
 
-void add_to_search_result(SearchResult *sr, char *line) {
+void add_to_search_result(SearchResult *sr, MatchedLine line) {
   if (sr->count == sr->capacity) {
     sr->capacity *= 2;
-    sr->lines = realloc(sr->lines, sr->capacity * sizeof(char *));
+    sr->lines = realloc(sr->lines, sr->capacity * sizeof(MatchedLine));
   }
-  sr->lines[sr->count] = strdup(line);
-  sr->count++;
-}
-
-void _add_to_search_result(SearchResult *sr, MatchedLine line) {
-  if (sr->count == sr->capacity) {
-    sr->capacity *= 2;
-    sr->lines_ = realloc(sr->lines_, sr->capacity * sizeof(MatchedLine));
-  }
-  sr->lines_[sr->count] = line;
+  sr->lines[sr->count] = line;
   sr->count++;
 }
 
@@ -55,17 +45,14 @@ void print_search_result(SearchResult sr) {
   printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
 
   for (int i = 0; i < sr.count; i++) {
-    // printf("%s", sr.lines[i]);
-    printf("%s", sr.lines_[i].line);
+    printf("%s", sr.lines[i].line);
   }
   printf("\n");
 }
 
 void free_search_result(SearchResult *sr) {
   for (int i = 0; i < sr->count; i++) {
-    free(sr->lines[i]);
-    free_matched_line(&sr->lines_[i]);
+    free_matched_line(&sr->lines[i]);
   }
   free(sr->lines);
-  free(sr->lines_);
 }

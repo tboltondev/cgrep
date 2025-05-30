@@ -25,39 +25,8 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
     char *match = strstr(line, pattern);
 
     if (match != NULL) {
-      // int matched_position = match - line;
-      // int match_length = strlen(pattern);
-      // int line_len = strlen(line);
-
-      // char matched_line[MAX_LINE_SIZE];
-      // int buffer_size = sizeof(matched_line);
-      // int offset = 0;
-
-      // TODO: colors shouldnt be part of this
-      // offset += snprintf(matched_line + offset, buffer_size - offset,
-      //                    ANSI_COLOR_GREEN);
-      // offset += snprintf(matched_line + offset, buffer_size - offset,
-      //                    "%i:", line_num);
-      // offset += snprintf(matched_line + offset, buffer_size - offset,
-      //                    ANSI_COLOR_RESET);
-      // offset +=
-      //     snprintf(matched_line + offset, buffer_size - offset, "%.*s",
-      //              matched_position, line); // part of line before first match
-      // offset +=
-      //     snprintf(matched_line + offset, buffer_size - offset, ANSI_COLOR_RED);
-      // offset += snprintf(matched_line + offset, buffer_size - offset, "%.*s",
-      //                    match_length, &line[matched_position]); // first match
-      // offset += snprintf(matched_line + offset, buffer_size - offset,
-      //                    ANSI_COLOR_RESET);
-      // offset +=
-      //     snprintf(matched_line + offset, buffer_size - offset, "%s",
-      //              &line[matched_position + match_length]); // remainder of line
-
-      MatchedLine ml = create_matched_line(line, match, line_num); // TODO: rename
-
-      _add_to_search_result(sr, ml);
-
-      // add_to_search_result(sr, matched_line);
+      MatchedLine matched_line = create_matched_line(line, match, line_num);
+      add_to_search_result(sr, matched_line);
     }
     line_num++;
   }
@@ -71,7 +40,7 @@ void handle_search_file(char *pattern, char *path, ResultHandler result_handler)
     if (sr.count > 0)
       result_handler(sr);
 
-    // free_search_result(&sr);
+    free_search_result(&sr);
 }
 
 void search_dir_recursively(char *pattern, char *base_path, ResultHandler result_handler, int current_depth,
