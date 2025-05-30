@@ -9,13 +9,16 @@
 // TODO: file for colors
 
 MatchedLine create_matched_line(char *line, char *match, int line_num) {
-  MatchedLine matched_line;
-  matched_line.line = malloc(strlen(line) + 1);
-  strcpy(matched_line.line, line);
-  matched_line.line_num = line_num;
-  matched_line.line_len = strlen(line);
-  matched_line.match_position = match - line;
-  matched_line.match_len = strlen(match);
+  MatchedLine matched_line = {
+    .line = malloc(strlen(line) + 1),
+    .line_num = line_num,
+    .line_len = strlen(line),
+    .match_position = match - line,
+    .match_len = strlen(match)
+  };
+
+  strcpy(matched_line.line, line); // TODO: use strncpy or snprintf
+
   return matched_line;
 }
 
