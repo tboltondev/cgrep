@@ -1,5 +1,5 @@
-#include "output_handler.h"
-#include "searcher.h"
+#include "../include/output_handler.h"
+#include "../include/searcher.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
