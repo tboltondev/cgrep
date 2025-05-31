@@ -8,11 +8,11 @@ typedef struct {
   char *line;
   int line_num;
   int line_len;
-  int match_position;
+  int match_position; // should some of these ints be long
   int match_len;
 } MatchedLine;
 
-MatchedLine create_matched_line(char *line, char *match, int line_num);
+MatchedLine create_matched_line(char *line, char *match, int match_len, int line_num);
 
 void free_matched_line(MatchedLine *matched_line);
 

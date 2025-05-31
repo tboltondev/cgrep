@@ -6,9 +6,6 @@
 #include <string.h>
 #include <sys/syslimits.h>
 
-#define ANSI_COLOR_GREEN "\x1b[32m"
-#define ANSI_COLOR_RED "\x1b[31m"
-#define ANSI_COLOR_RESET "\x1b[0m"
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
 void search_file(SearchResult *sr, char *pattern, char *path) {
@@ -25,7 +22,7 @@ void search_file(SearchResult *sr, char *pattern, char *path) {
     char *match = strstr(line, pattern);
 
     if (match != NULL) {
-      MatchedLine matched_line = create_matched_line(line, match, line_num);
+      MatchedLine matched_line = create_matched_line(line, match, strlen(pattern), line_num);
       add_to_search_result(sr, matched_line);
     }
     line_num++;

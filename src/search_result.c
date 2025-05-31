@@ -1,20 +1,17 @@
 #include "../include/search_result.h"
+#include "../include/colors.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_RESET "\x1b[0m"
-// TODO: file for colors
-
-MatchedLine create_matched_line(char *line, char *match, int line_num) {
+MatchedLine create_matched_line(char *line, char *match, int match_len, int line_num) {
   MatchedLine matched_line = {
     .line = malloc(strlen(line) + 1),
     .line_num = line_num,
     .line_len = strlen(line),
     .match_position = match - line,
-    .match_len = strlen(match)
+    .match_len = match_len
   };
 
   strcpy(matched_line.line, line); // TODO: use strncpy or snprintf
@@ -51,7 +48,10 @@ void print_search_result(SearchResult sr) {
   printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
 
   for (int i = 0; i < sr.count; i++) {
-    printf("%s", sr.lines[i].line);
+    printf(ANSI_COLOR_GREEN "%i:", sr.lines[i].line_num);
+    printf(ANSI_COLOR_RESET "%.*s", sr.lines[i].match_position, sr.lines[i].line); // print line up to first match
+    printf(ANSI_COLOR_RED "%.*s", sr.lines[i].match_len, &sr.lines[i].line[sr.lines[i].match_position]); // print match
+    printf(ANSI_COLOR_RESET "%s", &sr.lines[i].line[sr.lines[i].match_position + sr.lines[i].match_len]); // print remainder of line
   }
   printf("\n");
 }
