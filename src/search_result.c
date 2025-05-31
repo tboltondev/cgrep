@@ -27,12 +27,15 @@ void free_matched_line(MatchedLine *matched_line) {
 }
 
 SearchResult create_search_result(size_t initial_capacity, char *path) {
-  SearchResult sr;
-  strcpy(sr.path, path);
-  sr.lines = malloc(initial_capacity * sizeof(MatchedLine));
-  sr.count = 0;
-  sr.capacity = initial_capacity;
-  return sr;
+  SearchResult search_result = {
+    .lines = malloc(initial_capacity * sizeof(MatchedLine)),
+    .count = 0,
+    .capacity = initial_capacity
+  };
+
+  strcpy(search_result.path, path); // TODO: use strncpy or snprintf
+
+  return search_result;
 }
 
 void add_to_search_result(SearchResult *sr, MatchedLine line) {
