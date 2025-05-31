@@ -48,10 +48,11 @@ void print_search_result(SearchResult sr) {
   printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
 
   for (int i = 0; i < sr.count; i++) {
-    printf(ANSI_COLOR_GREEN "%i:", sr.lines[i].line_num);
-    printf(ANSI_COLOR_RESET "%.*s", sr.lines[i].match_position, sr.lines[i].line); // print line up to first match
-    printf(ANSI_COLOR_RED "%.*s", sr.lines[i].match_len, &sr.lines[i].line[sr.lines[i].match_position]); // print match
-    printf(ANSI_COLOR_RESET "%s", &sr.lines[i].line[sr.lines[i].match_position + sr.lines[i].match_len]); // print remainder of line
+    MatchedLine matched = sr.lines[i];
+    printf(ANSI_COLOR_GREEN "%i:", matched.line_num);
+    printf(ANSI_COLOR_RESET "%.*s", matched.match_position, matched.line); // print line up to first match
+    printf(ANSI_COLOR_RED "%.*s", matched.match_len, &matched.line[matched.match_position]); // print match
+    printf(ANSI_COLOR_RESET "%s", &matched.line[matched.match_position + matched.match_len]); // print remainder of line
   }
   printf("\n");
 }
