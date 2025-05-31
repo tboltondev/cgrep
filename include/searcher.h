@@ -12,7 +12,7 @@ void handle_search_file(char *pattern, char *path,
 
 void search_dir_recursively(char *pattern, char *base_path,
                             ResultHandler result_handler, int current_depth,
-                            int max_depth); // TODO: exclude files / dirs
+                            int max_depth); // TODO: exclude .gitignore files / dirs, binaries etc
 
 void search(char *pattern, char *path, ResultHandler result_handler);
 
