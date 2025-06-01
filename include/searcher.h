@@ -5,15 +5,15 @@
 
 typedef void (*ResultHandler)(SearchResult);
 
-void search_file(SearchResult *sr, char *pattern, char *path);
+void search_file(SearchResult *sr, const char *pattern, const char *path);
 
-void handle_search_file(char *pattern, char *path,
+void handle_search_file(const char *pattern, const char *path,
                         ResultHandler result_handler);
 
-void search_dir_recursively(char *pattern, char *base_path,
+void search_dir_recursively(const char *pattern, const char *base_path,
                             ResultHandler result_handler, int current_depth,
                             int max_depth); // TODO: exclude .gitignore files / dirs, binaries etc
 
-void search(char *pattern, char *path, ResultHandler result_handler);
+void search(const char *pattern, const char *path, ResultHandler result_handler);
 
 #endif

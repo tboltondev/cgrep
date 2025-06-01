@@ -23,7 +23,7 @@ void free_matched_line(MatchedLine *matched_line) {
   free(matched_line->line);
 }
 
-SearchResult create_search_result(size_t initial_capacity, char *path) {
+SearchResult create_search_result(size_t initial_capacity, const char *path) {
   SearchResult search_result = {
     .lines = malloc(initial_capacity * sizeof(MatchedLine)),
     .count = 0,
