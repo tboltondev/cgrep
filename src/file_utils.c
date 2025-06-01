@@ -1,4 +1,4 @@
-#include "file_utils.h"
+#include "../include/file_utils.h"
 #include <stdio.h>
 #include <sys/stat.h>
 
@@ -18,4 +18,12 @@ int is_file(const char *path) {
     return 0;
   }
   return S_ISREG(statbuf.st_mode);
+}
+
+void remove_newlines(char *str) {
+  while (*str) {
+    if (*str == '\n')
+      *str = '\0';
+    str++;
+  }
 }

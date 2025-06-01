@@ -5,4 +5,6 @@ int is_dir(const char *path);
 
 int is_file(const char *path);
 
+void remove_newlines(char *str);
+
 #endif

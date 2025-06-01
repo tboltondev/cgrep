@@ -5,4 +5,6 @@
 
 void to_stdout(SearchResult sr);
 
+void json_stdout(SearchResult sr);
+
 #endif

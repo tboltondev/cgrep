@@ -7,8 +7,9 @@ set(SOURCES
   src/search_result.c
   src/output_handler.c
   src/file_utils.c
+  src/json_utils.c
 )
 
-include_directories(${PROJECT_SOURCE_DIR}/include) 
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable(cgrep ${SOURCES})
