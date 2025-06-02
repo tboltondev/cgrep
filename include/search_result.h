@@ -12,7 +12,8 @@ typedef struct {
   int match_len;
 } MatchedLine;
 
-MatchedLine create_matched_line(char *line, char *match, int match_len, int line_num);
+MatchedLine create_matched_line(char *line, char *match, int match_len,
+                                int line_num);
 
 void free_matched_line(MatchedLine *matched_line);
 
