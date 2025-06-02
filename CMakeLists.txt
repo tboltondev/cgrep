@@ -8,6 +8,7 @@ set(SOURCES
   src/output_handler.c
   src/file_utils.c
   src/json_utils.c
+  src/arg_parser.c
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include)

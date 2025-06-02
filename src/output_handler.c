@@ -1,7 +1,7 @@
 #include "../include/output_handler.h"
-#include "../include/search_result.h"
 #include "../include/file_utils.h"
 #include "../include/json_utils.h"
+#include "../include/search_result.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -20,16 +20,14 @@ void json_stdout(SearchResult sr) {
     escape_chars(line, escaped_str);
 
     printf("{"
-        "\"line\":\"%s\","
-        "\"line_number\":%d,"
-        "\"match_position\":%d,"
-        "\"match_length\":%d"
-        "}",
-        escaped_str,
-        sr.lines[i].line_num,
-        sr.lines[i].match_position + 1, // + 1 to because of 0-indexing
-        sr.lines[i].match_len
-    );
+           "\"line\":\"%s\","
+           "\"line_number\":%d,"
+           "\"match_position\":%d,"
+           "\"match_length\":%d"
+           "}",
+           escaped_str, sr.lines[i].line_num,
+           sr.lines[i].match_position + 1, // + 1 to because of 0-indexing
+           sr.lines[i].match_len);
     if (i != sr.count - 1)
       printf(",");
   }
