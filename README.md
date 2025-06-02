@@ -7,4 +7,4 @@ cgrep [pattern] [optional path] [optional flags...]
 ```
 
 ### flags
---json - format output as json
+`--json` - format output as json
