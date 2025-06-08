@@ -8,10 +8,11 @@
 
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
-void search_file(SearchResult *sr, const char *pattern, const char *path) {
+SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
-    printf("Error opening file %s\n", path);
+    fprintf(stderr, "Error opening file %s\n", path);
+    return SEARCH_ERR_FILE_READ;
   }
 
   char line[300]; // Max chars in line, maybe make dynamic
@@ -28,33 +29,35 @@ void search_file(SearchResult *sr, const char *pattern, const char *path) {
     }
     line_num++;
   }
+  return SEARCH_SUCCESS;
 }
 
-void handle_search_file(const char *pattern, const char *path,
+SearchStatus handle_search_file(const char *pattern, const char *path,
                         ResultHandler result_handler) {
   SearchResult sr = create_search_result(10, path);
 
-  search_file(&sr, pattern, path);
+  SearchStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
     result_handler(sr);
 
   free_search_result(&sr);
+  return status;
 }
 
-void search_dir_recursively(const char *pattern, const char *base_path,
+SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
                             ResultHandler result_handler, int current_depth,
                             int max_depth) {
   if (current_depth > max_depth) {
-    printf("Reached max directory depth\n");
-    return;
+    fprintf(stderr, "Reached max directory depth\n"); // TODO: flag for user to set this
+    return SEARCH_ERR_MAX_DIR_DEPTH;
   }
 
   DIR *dir = opendir(base_path);
   if (dir == NULL) {
-    printf("Error opening directory %s\n",
-           base_path); // TODO: handle errors, error codes
-    return;
+    fprintf(stderr, "Error opening directory %s\n",
+           base_path);
+    return SEARCH_ERR_FILE_READ;
   }
 
   struct dirent *entry;
@@ -69,20 +72,21 @@ void search_dir_recursively(const char *pattern, const char *base_path,
       search_dir_recursively(pattern, path, result_handler, current_depth + 1,
                              max_depth);
     } else if (is_file(path)) {
-      // TODO: handle errors
       handle_search_file(pattern, path, result_handler);
     }
   }
   closedir(dir);
+  return SEARCH_SUCCESS;
 }
 
-void search(const char *pattern, const char *path,
+SearchStatus search(const char *pattern, const char *path,
             ResultHandler result_handler) {
   const int MAX_DEPTH = 1000;
 
   if (is_dir(path)) {
-    search_dir_recursively(pattern, path, result_handler, 0, MAX_DEPTH);
+    return search_dir_recursively(pattern, path, result_handler, 0, MAX_DEPTH);
   } else if (is_file(path)) {
-    handle_search_file(pattern, path, result_handler);
+    return handle_search_file(pattern, path, result_handler);
   }
+  return SEARCH_SUCCESS;
 }
