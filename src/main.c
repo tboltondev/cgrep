@@ -8,5 +8,5 @@ int main(int argc, char *argv[]) {
     return 1;
 
   ResultHandler result_handler = args.json ? json_stdout : to_stdout;
-  search(args.pattern, args.path, result_handler);
+  return search(args.pattern, args.path, result_handler);
 }

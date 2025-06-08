@@ -1,0 +1,11 @@
+#ifndef RESULT_STATUS_H
+#define RESULT_STATUS_H
+
+typedef enum {
+    SEARCH_SUCCESS = 0,
+    SEARCH_ERR_INVALID_PATH,
+    SEARCH_ERR_FILE_READ,
+    SEARCH_ERR_MAX_DIR_DEPTH
+} SearchStatus;
+
+#endif
