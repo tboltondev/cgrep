@@ -6,7 +6,7 @@
 
 typedef void (*ResultHandler)(SearchResult);
 
-void search_file(SearchResult *sr, const char *pattern, const char *path);
+SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path);
 
 SearchStatus handle_search_file(const char *pattern, const char *path,
                         ResultHandler result_handler);

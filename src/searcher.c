@@ -8,10 +8,12 @@
 
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
-void search_file(SearchResult *sr, const char *pattern, const char *path) {
+SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path) {
   FILE *file = fopen(path, "r");
-  if (file == NULL)
+  if (file == NULL) {
     fprintf(stderr, "Error opening file %s\n", path);
+    return SEARCH_ERR_FILE_READ;
+  }
 
   char line[300]; // Max chars in line, maybe make dynamic
 
@@ -27,19 +29,20 @@ void search_file(SearchResult *sr, const char *pattern, const char *path) {
     }
     line_num++;
   }
+  return SEARCH_SUCCESS;
 }
 
 SearchStatus handle_search_file(const char *pattern, const char *path,
                         ResultHandler result_handler) {
   SearchResult sr = create_search_result(10, path);
 
-  search_file(&sr, pattern, path);
+  SearchStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
-    result_handler(sr);
+    result_handler(sr); // TODO: handle error
 
   free_search_result(&sr);
-  return SEARCH_SUCCESS;
+  return status;
 }
 
 SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
