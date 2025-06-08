@@ -39,7 +39,7 @@ SearchStatus handle_search_file(const char *pattern, const char *path,
   SearchStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
-    result_handler(sr); // TODO: handle error
+    result_handler(sr);
 
   free_search_result(&sr);
   return status;
