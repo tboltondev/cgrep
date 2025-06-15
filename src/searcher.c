@@ -26,7 +26,7 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
     // TODO: use extended regex
     // TODO: use regerror
     if ((regcomp(&regex_buffer, pattern, 0)) != 0) {
-      printf("Regex compilation failed\n");
+      fprintf(stderr, "Regex compilation failed\n");
       return REGEX_COMPILATION_ERR;
     }
 
