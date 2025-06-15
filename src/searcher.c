@@ -29,7 +29,6 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
       return REGEX_COMPILATION_ERR;
     }
 
-    int match_result;
     regmatch_t pmatch;
 
     if ((regexec(&regex_buffer, line, 1, &pmatch, 0)) == 0) {
