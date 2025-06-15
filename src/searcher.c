@@ -21,7 +21,6 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
   int line_num = 1;
   while (fgets(line, sizeof(line), file) != NULL) {
     regex_t regex_buffer;
-    int ret;
 
     // TODO: use extended regex
     // TODO: use regerror
