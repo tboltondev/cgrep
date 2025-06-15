@@ -15,8 +15,6 @@ typedef struct {
 MatchedLine create_matched_line(char *line, size_t match_start, size_t match_end,
                                 int line_num);
 
-void free_matched_line(MatchedLine *matched_line);
-
 typedef struct {
   char path[PATH_MAX];
   MatchedLine *lines;

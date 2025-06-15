@@ -70,6 +70,7 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
 
   struct dirent *entry;
   while ((entry = readdir(dir)) != NULL) {
+    // TODO: exclude .gitignore files / dirs, binaries etc
     if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
       continue;
 
