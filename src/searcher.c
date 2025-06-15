@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/syslimits.h>
+#include <regex.h>
 
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
@@ -15,16 +16,25 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
     return SEARCH_ERR_FILE_READ;
   }
 
-  char line[300]; // Max chars in line, maybe make dynamic
+  char line[300]; // TODO: make dynamic
 
   int line_num = 1;
-
   while (fgets(line, sizeof(line), file) != NULL) {
-    char *match = strstr(line, pattern);
+    regex_t regex_buffer;
+    int ret;
 
-    if (match != NULL) {
-      MatchedLine matched_line =
-          create_matched_line(line, match, strlen(pattern), line_num);
+    // TODO: use extended regex
+    // TODO: use regerror
+    if ((regcomp(&regex_buffer, pattern, 0)) != 0) {
+      printf("Regex compilation failed\n");
+      return REGEX_COMPILATION_ERR;
+    }
+
+    int match_result;
+    regmatch_t pmatch;
+
+    if ((regexec(&regex_buffer, line, 1, &pmatch, 0)) == 0) {
+      MatchedLine matched_line = create_matched_line(line, pmatch.rm_so, pmatch.rm_eo, line_num);
       add_to_search_result(sr, matched_line);
     }
     line_num++;

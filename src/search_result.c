@@ -5,15 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-MatchedLine create_matched_line(char *line, char *match, int match_len,
+MatchedLine create_matched_line(char *line, size_t match_start, size_t match_end,
                                 int line_num) {
-  MatchedLine matched_line = {.line = malloc(strlen(line) + 1),
-                              .line_num = line_num,
-                              .line_len = strlen(line),
-                              .match_position = match - line,
-                              .match_len = match_len};
+  int line_len = strlen(line) + 1;
 
-  strcpy(matched_line.line, line); // TODO: use strncpy or snprintf
+  MatchedLine matched_line = {.line = malloc(line_len),
+                              .line_num = line_num,
+                              .line_len = line_len,
+                              .match_position = match_start,
+                              .match_len = match_end - match_start};
+
+  strncpy(matched_line.line, line, matched_line.line_len);
 
   return matched_line;
 }
@@ -26,7 +28,7 @@ SearchResult create_search_result(size_t initial_capacity, const char *path) {
       .count = 0,
       .capacity = initial_capacity};
 
-  strcpy(search_result.path, path); // TODO: use strncpy or snprintf
+  strncpy(search_result.path, path, strlen(path));
 
   return search_result;
 }
