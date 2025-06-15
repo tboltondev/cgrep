@@ -13,7 +13,7 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     fprintf(stderr, "Error opening file %s\n", path);
-    return SEARCH_ERR_FILE_READ;
+    return FILE_READ_ERR;
   }
 
   char line[300]; // TODO: make dynamic
@@ -60,14 +60,14 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
                             int max_depth) {
   if (current_depth > max_depth) {
     fprintf(stderr, "Reached max directory depth\n"); // TODO: flag for user to set this
-    return SEARCH_ERR_MAX_DIR_DEPTH;
+    return MAX_DIR_DEPTH_ERR;
   }
 
   DIR *dir = opendir(base_path);
   if (dir == NULL) {
     fprintf(stderr, "Error opening directory %s\n",
            base_path);
-    return SEARCH_ERR_FILE_READ;
+    return FILE_READ_ERR;
   }
 
   struct dirent *entry;

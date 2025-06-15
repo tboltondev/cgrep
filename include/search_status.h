@@ -3,9 +3,9 @@
 
 typedef enum {
     SEARCH_SUCCESS = 0,
-    SEARCH_ERR_INVALID_PATH,
-    SEARCH_ERR_FILE_READ,
-    SEARCH_ERR_MAX_DIR_DEPTH,
+    INVALID_FILE_PATH_ERR, // TODO: currently not used
+    FILE_READ_ERR,
+    MAX_DIR_DEPTH_ERR,
     REGEX_COMPILATION_ERR
 } SearchStatus;
 
