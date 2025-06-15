@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/syslimits.h>
+#include <regex.h>
 
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
@@ -12,19 +13,26 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     fprintf(stderr, "Error opening file %s\n", path);
-    return SEARCH_ERR_FILE_READ;
+    return FILE_READ_ERR;
   }
 
-  char line[300]; // Max chars in line, maybe make dynamic
+  char line[300]; // TODO: make dynamic
 
   int line_num = 1;
-
   while (fgets(line, sizeof(line), file) != NULL) {
-    char *match = strstr(line, pattern);
+    regex_t regex_buffer;
 
-    if (match != NULL) {
-      MatchedLine matched_line =
-          create_matched_line(line, match, strlen(pattern), line_num);
+    // TODO: use extended regex
+    // TODO: use regerror
+    if ((regcomp(&regex_buffer, pattern, 0)) != 0) {
+      fprintf(stderr, "Regex compilation failed\n");
+      return REGEX_COMPILATION_ERR;
+    }
+
+    regmatch_t pmatch;
+
+    if ((regexec(&regex_buffer, line, 1, &pmatch, 0)) == 0) {
+      MatchedLine matched_line = create_matched_line(line, pmatch.rm_so, pmatch.rm_eo, line_num);
       add_to_search_result(sr, matched_line);
     }
     line_num++;
@@ -50,14 +58,14 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
                             int max_depth) {
   if (current_depth > max_depth) {
     fprintf(stderr, "Reached max directory depth\n"); // TODO: flag for user to set this
-    return SEARCH_ERR_MAX_DIR_DEPTH;
+    return MAX_DIR_DEPTH_ERR;
   }
 
   DIR *dir = opendir(base_path);
   if (dir == NULL) {
     fprintf(stderr, "Error opening directory %s\n",
            base_path);
-    return SEARCH_ERR_FILE_READ;
+    return FILE_READ_ERR;
   }
 
   struct dirent *entry;
