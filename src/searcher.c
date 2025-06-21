@@ -2,14 +2,15 @@
 #include "../include/file_utils.h"
 #include "../include/search_result.h"
 #include <dirent.h>
+#include <regex.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/syslimits.h>
-#include <regex.h>
 
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
-SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path) {
+SearchStatus search_file(SearchResult *sr, const char *pattern,
+                         const char *path) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     fprintf(stderr, "Error opening file %s\n", path);
@@ -32,7 +33,8 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
     regmatch_t pmatch;
 
     if ((regexec(&regex_buffer, line, 1, &pmatch, 0)) == 0) {
-      MatchedLine matched_line = create_matched_line(line, pmatch.rm_so, pmatch.rm_eo, line_num);
+      MatchedLine matched_line =
+          create_matched_line(line, pmatch.rm_so, pmatch.rm_eo, line_num);
       add_to_search_result(sr, matched_line);
     }
     line_num++;
@@ -41,30 +43,32 @@ SearchStatus search_file(SearchResult *sr, const char *pattern, const char *path
 }
 
 SearchStatus handle_search_file(const char *pattern, const char *path,
-                        ResultHandler result_handler) {
+                                ResultHandler result_handler,
+                                ResultHandlerContext rh_ctx) {
   SearchResult sr = create_search_result(10, path);
 
   SearchStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
-    result_handler(sr);
+    result_handler(sr, rh_ctx);
 
   free_search_result(&sr);
   return status;
 }
 
 SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
-                            ResultHandler result_handler, int current_depth,
-                            int max_depth) {
+                                    ResultHandler result_handler,
+                                    ResultHandlerContext rh_ctx,
+                                    int current_depth, int max_depth) {
   if (current_depth > max_depth) {
-    fprintf(stderr, "Reached max directory depth\n"); // TODO: flag for user to set this
+    fprintf(stderr,
+            "Reached max directory depth\n"); // TODO: flag for user to set this
     return MAX_DIR_DEPTH_ERR;
   }
 
   DIR *dir = opendir(base_path);
   if (dir == NULL) {
-    fprintf(stderr, "Error opening directory %s\n",
-           base_path);
+    fprintf(stderr, "Error opening directory %s\n", base_path);
     return FILE_READ_ERR;
   }
 
@@ -78,10 +82,10 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
     snprintf(path, sizeof(path), "%s/%s", base_path, entry->d_name);
 
     if (is_dir(path)) {
-      search_dir_recursively(pattern, path, result_handler, current_depth + 1,
-                             max_depth);
+      search_dir_recursively(pattern, path, result_handler, rh_ctx,
+                             current_depth + 1, max_depth);
     } else if (is_file(path)) {
-      handle_search_file(pattern, path, result_handler);
+      handle_search_file(pattern, path, result_handler, rh_ctx);
     }
   }
   closedir(dir);
@@ -89,13 +93,15 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
 }
 
 SearchStatus search(const char *pattern, const char *path,
-            ResultHandler result_handler) {
+                    ResultHandler result_handler, ResultHandlerContext rh_ctx) {
   const int MAX_DEPTH = 1000;
 
   if (is_dir(path)) {
-    return search_dir_recursively(pattern, path, result_handler, 0, MAX_DEPTH);
+    return search_dir_recursively(pattern, path, result_handler, rh_ctx, 0,
+                                  MAX_DEPTH);
   } else if (is_file(path)) {
-    return handle_search_file(pattern, path, result_handler);
+    return handle_search_file(pattern, path, result_handler, rh_ctx);
   }
+
   return SEARCH_SUCCESS;
 }

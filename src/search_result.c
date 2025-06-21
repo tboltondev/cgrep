@@ -1,5 +1,4 @@
 #include "../include/search_result.h"
-#include "../include/colors.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,23 +39,6 @@ void add_to_search_result(SearchResult *sr, MatchedLine line) {
   }
   sr->lines[sr->count] = line;
   sr->count++;
-}
-
-void print_search_result(SearchResult sr) {
-  printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
-
-  for (int i = 0; i < sr.count; i++) {
-    MatchedLine matched = sr.lines[i];
-    printf(ANSI_COLOR_GREEN "%i:", matched.line_num);
-    printf(ANSI_COLOR_RESET "%.*s", matched.match_position,
-           matched.line); // print line up to first match
-    printf(ANSI_COLOR_RED "%.*s", matched.match_len,
-           &matched.line[matched.match_position]); // print match
-    printf(ANSI_COLOR_RESET "%s",
-           &matched.line[matched.match_position +
-                         matched.match_len]); // print remainder of line
-  }
-  printf("\n");
 }
 
 void free_search_result(SearchResult *sr) {
