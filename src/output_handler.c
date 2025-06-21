@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
+int to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
   printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
 
   for (int i = 0; i < sr.count; i++) {
@@ -22,9 +22,11 @@ void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
            &matched.line[matched.match_position + matched.match_len]);
   }
   printf("\n");
+
+  return 1;
 }
 
-void json_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
+int json_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
   printf("{\"path\":\"%s\",", sr.path);
   printf("\"results\":[");
 
@@ -50,17 +52,19 @@ void json_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
 
   printf("]");
   printf("}\n");
+
+  return 1;
 }
 
-void to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
+int to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
   if (rh_ctx.output_filepath == NULL) {
     fprintf(stderr, "Missing output file path\n");
-    // return -1;
+    return 0;
   }
   FILE *outfile = fopen(rh_ctx.output_filepath, "a");
   if (outfile == NULL) {
     fprintf(stderr, "Error opening file: %s\n", rh_ctx.output_filepath);
-    // return -1;
+    return 0;
   }
 
   fprintf(outfile, "%s\n", sr.path);
@@ -73,18 +77,18 @@ void to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
   fprintf(outfile, "\n");
 
   fclose(outfile);
-  // return 0;
+  return 1;
 }
 
-void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
+int json_to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
   if (rh_ctx.output_filepath == NULL) {
     fprintf(stderr, "Missing output file path\n");
-    // return -1;
+    return 0;
   }
   FILE *outfile = fopen(rh_ctx.output_filepath, "a");
   if (outfile == NULL) {
     fprintf(stderr, "Error opening file: %s\n", rh_ctx.output_filepath);
-    // return -1;
+    return 0;
   }
 
   fprintf(outfile, "{\"path\":\"%s\",", sr.path);
@@ -113,4 +117,6 @@ void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
 
   fprintf(outfile, "]");
   fprintf(outfile, "}\n");
+
+  return 1;
 }
