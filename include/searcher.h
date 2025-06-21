@@ -8,7 +8,7 @@ typedef struct {
   const char *output_filepath;
 } ResultHandlerContext;
 
-typedef int (*ResultHandler)(SearchResult, ResultHandlerContext);
+typedef void (*ResultHandler)(SearchResult, ResultHandlerContext);
 
 SearchStatus search(const char *pattern, const char *path,
                     ResultHandler result_handler, ResultHandlerContext rh_ctx);

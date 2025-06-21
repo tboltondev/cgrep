@@ -50,8 +50,7 @@ SearchStatus handle_search_file(const char *pattern, const char *path,
   SearchStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
-    if (!result_handler(sr, rh_ctx))
-      fprintf(stderr, "Error handling result\n");
+    result_handler(sr, rh_ctx);
 
   free_search_result(&sr);
   return status;

@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     result_handler = to_file;
 
     if (args.json)
-      // TODO: doesn't produce valid json file, outputs one object per file that contains matches
+      // TODO: doesn't write single json obj, writes one object per file that contains matches
       result_handler = json_to_file;
   }
 

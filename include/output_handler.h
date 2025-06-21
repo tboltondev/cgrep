@@ -4,12 +4,12 @@
 #include "search_result.h"
 #include "searcher.h"
 
-int to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
 
-int json_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+void json_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
 
-int to_file(SearchResult sr, ResultHandlerContext rh_ctx);
+void to_file(SearchResult sr, ResultHandlerContext rh_ctx);
 
-int json_to_file(SearchResult sr, ResultHandlerContext rh_ctx);
+void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx);
 
 #endif
