@@ -7,4 +7,6 @@ int is_file(const char *path);
 
 void remove_newlines(char *str);
 
+int truncate_file(const char *path);
+
 #endif

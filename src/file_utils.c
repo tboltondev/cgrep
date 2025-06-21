@@ -27,3 +27,13 @@ void remove_newlines(char *str) {
     str++;
   }
 }
+
+int truncate_file(const char *path) {
+  FILE *fp = fopen(path, "w");
+  if (fp == NULL) {
+    fprintf(stderr, "Error opening file: %s\n", path);
+    return 0;
+  }
+  fclose(fp);
+  return 1;
+}
