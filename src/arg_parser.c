@@ -1,4 +1,4 @@
-#include "../include/arg_parser.h"
+#include "arg_parser.h"
 #include <stdio.h>
 #include <string.h>
 
