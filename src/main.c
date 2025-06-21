@@ -1,7 +1,7 @@
-#include "../include/arg_parser.h"
-#include "../include/file_utils.h"
-#include "../include/output_handler.h" // TODO: find out why absolute includes are not working
-#include "../include/searcher.h"
+#include "arg_parser.h"
+#include "file_utils.h"
+#include "output_handler.h"
+#include "searcher.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {

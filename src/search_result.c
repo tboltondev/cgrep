@@ -1,4 +1,4 @@
-#include "../include/search_result.h"
+#include "search_result.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>

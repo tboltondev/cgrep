@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 project(cgrep VERSION 0.0.1 LANGUAGES C)
 
-set(SOURCES
+set(CMAKE_EXPORT_COMPILE_COMMANDS On)
+
+add_executable(cgrep ${SOURCES})
+
+target_sources(
+  cgrep
+  PRIVATE
   src/main.c
   src/searcher.c
   src/search_result.c
@@ -11,6 +17,4 @@ set(SOURCES
   src/arg_parser.c
 )
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
-add_executable(cgrep ${SOURCES})
+target_include_directories(cgrep PRIVATE include)

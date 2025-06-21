@@ -1,8 +1,8 @@
-#include "../include/output_handler.h"
-#include "../include/colors.h"
-#include "../include/file_utils.h"
-#include "../include/json_utils.h"
-#include "../include/search_result.h"
+#include "output_handler.h"
+#include "colors.h"
+#include "file_utils.h"
+#include "json_utils.h"
+#include "search_result.h"
 #include <stdio.h>
 #include <string.h>
 

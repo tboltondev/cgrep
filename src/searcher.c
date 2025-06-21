@@ -1,6 +1,6 @@
-#include "../include/searcher.h"
-#include "../include/file_utils.h"
-#include "../include/search_result.h"
+#include "searcher.h"
+#include "file_utils.h"
+#include "search_result.h"
 #include <dirent.h>
 #include <regex.h>
 #include <stdio.h>
