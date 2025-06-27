@@ -6,10 +6,14 @@
 
 void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
 
-void json_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+void json_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
 
 void to_file(SearchResult sr, ResultHandlerContext rh_ctx);
 
 void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx);
+
+void csv_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+
+void csv_to_file(SearchResult sr, ResultHandlerContext rh_ctx);
 
 #endif

@@ -19,6 +19,8 @@ int parse_args(int argc, char *argv[], Args *args) {
   for (; arg_index < argc; ++arg_index) {
     if (strcmp(argv[arg_index], "--json") == 0) {
       args->json = 1;
+    } else if (strcmp(argv[arg_index], "--csv") == 0) {
+      args->csv = 1; // TODO: change to args.format // json, csv, ...
     } else if (strncmp(argv[arg_index], "-o=", 3) == 0) {
       args->output_file = argv[arg_index] + 3;
     } else {

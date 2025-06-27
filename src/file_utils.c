@@ -20,7 +20,7 @@ int is_file(const char *path) {
   return S_ISREG(statbuf.st_mode);
 }
 
-void remove_newlines(char *str) {
+void remove_newline_chars(char *str) {
   while (*str) {
     if (*str == '\n')
       *str = '\0';

@@ -82,6 +82,7 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
     snprintf(path, sizeof(path), "%s/%s", base_path, entry->d_name);
 
     if (is_dir(path)) {
+      // TODO: avoid recursion
       search_dir_recursively(pattern, path, result_handler, rh_ctx,
                              current_depth + 1, max_depth);
     } else if (is_file(path)) {
@@ -94,6 +95,7 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
 
 SearchStatus search(const char *pattern, const char *path,
                     ResultHandler result_handler, ResultHandlerContext rh_ctx) {
+  // TODO: user flag to override this
   const int MAX_DEPTH = 1000;
 
   if (is_dir(path)) {

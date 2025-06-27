@@ -5,7 +5,7 @@ int is_dir(const char *path);
 
 int is_file(const char *path);
 
-void remove_newlines(char *str);
+void remove_newline_chars(char *str);
 
 int truncate_file(const char *path);
 
