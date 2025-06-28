@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
   ResultHandler result_handler = to_stdout;
   ResultHandlerContext rh_ctx = {0};
 
-  if (args.output_file) {
-    rh_ctx.output_filepath = args.output_file;
+  if (args.out_file) {
+    rh_ctx.output_filepath = args.out_file;
     result_handler = to_file;
 
     if (!truncate_file(rh_ctx.output_filepath)) {
@@ -21,11 +21,10 @@ int main(int argc, char *argv[]) {
       return FILE_READ_ERR;
     }
 
-    if (args.json) {
+    if (args.out_format == OUT_JSON)
       result_handler = json_to_file;
-    }
 
-    if (args.csv) {
+    if (args.out_format == OUT_CSV) {
       // TODO: shouldn't be in main
       FILE *outfile = fopen(rh_ctx.output_filepath, "w");
       if (outfile == NULL)
@@ -37,9 +36,9 @@ int main(int argc, char *argv[]) {
 
       result_handler = csv_to_file;
     }
-  } else if (args.json) {
+  } else if (args.out_format == OUT_JSON) {
     result_handler = json_to_stdout;
-  } else if (args.csv) {
+  } else if (args.out_format == OUT_CSV) {
     // TODO: this shouldn't be in main
     fprintf(stdout, "filepath, line number, line, match position, match length\n");
     result_handler = csv_to_stdout;
