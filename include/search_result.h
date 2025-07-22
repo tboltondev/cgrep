@@ -2,7 +2,7 @@
 #define SEARCH_RESULT_H
 
 #include <stddef.h>
-#include <sys/syslimits.h>
+#include <limits.h>
 
 typedef struct {
   char *line;

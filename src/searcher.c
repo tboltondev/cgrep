@@ -5,7 +5,6 @@
 #include <regex.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/syslimits.h>
 
 #define MAX_LINE_SIZE 300 * sizeof(char)
 
