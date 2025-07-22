@@ -127,10 +127,7 @@ void csv_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
       char quoted_str[qs_len];
 
       // TODO: maybe move into utils
-      quoted_str[0] = '\"';
-      strlcpy(quoted_str + 1, escaped_str, sizeof(quoted_str) + 1);
-      quoted_str[qs_len - 2] = '\"';
-      quoted_str[qs_len - 1] = '\0';
+      snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", quoted_str);
 
       printf("%s, %i, %s, %i, %i\n", sr.path, ml.line_num, quoted_str,
              ml.match_position, ml.match_len);
@@ -165,10 +162,7 @@ void csv_to_file(SearchResult sr, const ResultHandlerContext rh_ctx) {
       char quoted_str[qs_len];
 
       // TODO: maybe move into utils
-      quoted_str[0] = '\"';
-      strlcpy(quoted_str + 1, escaped_str, sizeof(quoted_str) + 1);
-      quoted_str[qs_len - 2] = '\"';
-      quoted_str[qs_len - 1] = '\0';
+      snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
 
       fprintf(outfile, "%s, %i, %s, %i, %i\n", sr.path, ml.line_num, quoted_str,
              ml.match_position, ml.match_len);
