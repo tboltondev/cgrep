@@ -1,6 +1,6 @@
 #include <string.h>
 
-int json_count_escape_chars(char *str) {
+int json_count_escape_chars(const char *str) {
   int escape_chars_count = 0;
   for (int i = 0; i < strlen(str); ++i) {
     switch (str[i]) {
@@ -8,12 +8,13 @@ int json_count_escape_chars(char *str) {
     case '\\':
       escape_chars_count++;
       break;
+    default: ;
     }
   }
   return escape_chars_count;
 }
 
-void json_str_escape(char *str, char *out_str) {
+void json_str_escape(const char *str, char *out_str) {
   int k = 0;
   for (int j = 0; j < strlen(str); ++j) {
     switch (str[j]) {

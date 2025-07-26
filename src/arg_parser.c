@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int parse_args(int argc, char *argv[], Args *args) {
+int parse_args(const int argc, char *argv[], Args *args) {
   if (argc < 2) {
     fprintf(stderr, "Usage: cgrep <pattern> [path] [options]\n");
     return 0;

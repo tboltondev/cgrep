@@ -12,7 +12,7 @@ typedef struct {
   int match_len;
 } MatchedLine;
 
-MatchedLine create_matched_line(char *line, size_t match_start,
+MatchedLine create_matched_line(const char *line, size_t match_start,
                                 size_t match_end, int line_num);
 
 typedef struct {
@@ -26,6 +26,6 @@ SearchResult create_search_result(size_t initial_capacity, const char *path);
 
 void add_to_search_result(SearchResult *sr, MatchedLine line);
 
-void free_search_result(SearchResult *sr);
+void free_search_result(const SearchResult *sr);
 
 #endif

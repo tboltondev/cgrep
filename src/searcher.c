@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_LINE_SIZE 300 * sizeof(char)
+#define MAX_LINE_SIZE (300 * sizeof(char))
 
 SearchStatus search_file(SearchResult *sr, const char *pattern,
                          const char *path) {
@@ -32,7 +32,7 @@ SearchStatus search_file(SearchResult *sr, const char *pattern,
     regmatch_t pmatch;
 
     if ((regexec(&regex_buffer, line, 1, &pmatch, 0)) == 0) {
-      MatchedLine matched_line =
+      const MatchedLine matched_line =
           create_matched_line(line, pmatch.rm_so, pmatch.rm_eo, line_num);
       add_to_search_result(sr, matched_line);
     }

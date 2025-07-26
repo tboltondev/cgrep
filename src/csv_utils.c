@@ -1,19 +1,20 @@
 #include <string.h>
 
-int csv_count_quotes(char *str) {
+int csv_count_quotes(const char *str) {
   int escape_chars_count = 0;
   for (int i = 0; i < strlen(str); ++i) {
     switch (str[i]) {
     case '"':
       escape_chars_count++;
       break;
+    default: ;
     }
   }
   return escape_chars_count;
 }
 
 // TODO: add bounds check
-void csv_str_escape(char *str, char *out_str) {
+void csv_str_escape(const char *str, char *out_str) {
   int k = 0;
   for (int j = 0; j < strlen(str); ++j) {
     switch (str[j]) {
