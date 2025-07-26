@@ -9,40 +9,39 @@ int main(int argc, char *argv[]) {
   if (!parse_args(argc, argv, &args))
     return ARG_PARSE_ERR;
 
-  ResultHandler result_handler = to_stdout;
-  ResultHandlerContext rh_ctx = {0};
+  ResultHandler rh = { .handler = to_stdout };
 
   if (args.out_file) {
-    rh_ctx.output_filepath = args.out_file;
-    result_handler = to_file;
+    rh.handler = to_file;
+    rh.output_filepath = args.out_file;
 
-    if (!truncate_file(rh_ctx.output_filepath)) {
-      fprintf(stderr, "Error truncating file: %s\n", rh_ctx.output_filepath);
+    if (!truncate_file(rh.output_filepath)) {
+      fprintf(stderr, "Error truncating file: %s\n", rh.output_filepath);
       return FILE_READ_ERR;
     }
 
     if (args.out_format == OUT_JSON)
-      result_handler = json_to_file;
+      rh.handler = json_to_file;
 
     if (args.out_format == OUT_CSV) {
       // TODO: shouldn't be in main
-      FILE *outfile = fopen(rh_ctx.output_filepath, "w");
+      FILE *outfile = fopen(rh.output_filepath, "w");
       if (outfile == NULL)
-        fprintf(stderr, "Error opening file: %s\n", rh_ctx.output_filepath);
+        fprintf(stderr, "Error opening file: %s\n", rh.output_filepath);
 
       // this makes truncate unnecessary
       fprintf(outfile, "file path, line number, line, match position, match length\n");
       fclose(outfile);
 
-      result_handler = csv_to_file;
+      rh.handler = csv_to_file;
     }
   } else if (args.out_format == OUT_JSON) {
-    result_handler = json_to_stdout;
+    rh.handler = json_to_stdout;
   } else if (args.out_format == OUT_CSV) {
     // TODO: this shouldn't be in main
     fprintf(stdout, "filepath, line number, line, match position, match length\n");
-    result_handler = csv_to_stdout;
+    rh.handler = csv_to_stdout;
   }
 
-   return search(args.pattern, args.path, result_handler, rh_ctx);
+   return search(args.pattern, args.path, rh);
 }

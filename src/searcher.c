@@ -41,24 +41,21 @@ SearchStatus search_file(SearchResult *sr, const char *pattern,
   return SEARCH_SUCCESS;
 }
 
-SearchStatus handle_search_file(const char *pattern, const char *path,
-                                ResultHandler result_handler,
-                                ResultHandlerContext rh_ctx) {
+SearchStatus handle_search_file(const char *pattern, const char *path, const ResultHandler result_handler) {
   SearchResult sr = create_search_result(10, path);
 
-  SearchStatus status = search_file(&sr, pattern, path);
+  const SearchStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
-    result_handler(sr, rh_ctx);
+    result_handler.handler(sr, result_handler.output_filepath);
 
   free_search_result(&sr);
   return status;
 }
 
 SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
-                                    ResultHandler result_handler,
-                                    ResultHandlerContext rh_ctx,
-                                    int current_depth, int max_depth) {
+                                    const ResultHandler result_handler,
+                                    const int current_depth, const int max_depth) {
   if (current_depth > max_depth) {
     fprintf(stderr,
             "Reached max directory depth\n"); // TODO: flag for user to set this
@@ -82,26 +79,24 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
 
     if (is_dir(path)) {
       // TODO: avoid recursion
-      search_dir_recursively(pattern, path, result_handler, rh_ctx,
+      search_dir_recursively(pattern, path, result_handler,
                              current_depth + 1, max_depth);
     } else if (is_file(path)) {
-      handle_search_file(pattern, path, result_handler, rh_ctx);
+      handle_search_file(pattern, path, result_handler);
     }
   }
   closedir(dir);
   return SEARCH_SUCCESS;
 }
 
-SearchStatus search(const char *pattern, const char *path,
-                    ResultHandler result_handler, ResultHandlerContext rh_ctx) {
+SearchStatus search(const char *pattern, const char *path, const ResultHandler result_handler) {
   // TODO: user flag to override this
   const int MAX_DEPTH = 1000;
 
   if (is_dir(path)) {
-    return search_dir_recursively(pattern, path, result_handler, rh_ctx, 0,
-                                  MAX_DEPTH);
+    return search_dir_recursively(pattern, path, result_handler, 0, MAX_DEPTH);
   } else if (is_file(path)) {
-    return handle_search_file(pattern, path, result_handler, rh_ctx);
+    return handle_search_file(pattern, path, result_handler);
   }
 
   return SEARCH_SUCCESS;

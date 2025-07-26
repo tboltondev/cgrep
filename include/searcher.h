@@ -6,11 +6,9 @@
 
 typedef struct {
   const char *output_filepath;
-} ResultHandlerContext;
+  void (*handler)(SearchResult, const char*);
+} ResultHandler;
 
-typedef void (*ResultHandler)(SearchResult, ResultHandlerContext);
-
-SearchStatus search(const char *pattern, const char *path,
-                    ResultHandler result_handler, ResultHandlerContext rh_ctx);
+SearchStatus search(const char *pattern, const char *path, ResultHandler result_handler);
 
 #endif

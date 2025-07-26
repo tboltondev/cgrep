@@ -4,12 +4,11 @@
 #include "file_utils.h"
 #include "json_utils.h"
 #include "search_result.h"
-#include "searcher.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
-void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
+void to_stdout(SearchResult sr, const char *out_file) {
   printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
 
   for (int i = 0; i < sr.count; ++i) {
@@ -27,7 +26,7 @@ void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
   printf("\n");
 }
 
-void json_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
+void json_to_stdout(SearchResult sr, const char *out_file) {
   printf("{\"path\":\"%s\",", sr.path);
   printf("\"results\":[");
 
@@ -55,18 +54,18 @@ void json_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
   printf("}\n");
 }
 
-void to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
-  if (rh_ctx.output_filepath == NULL)
+void to_file(SearchResult sr, const char *out_file) {
+  if (out_file == NULL)
     fprintf(stderr, "Missing output file path\n");
 
-  FILE *outfile = fopen(rh_ctx.output_filepath, "a");
+  FILE *outfile = fopen(out_file, "a");
   if (outfile == NULL)
-    fprintf(stderr, "Error opening file: %s\n", rh_ctx.output_filepath);
+    fprintf(stderr, "Error opening file: %s\n", out_file);
 
   fprintf(outfile, "%s\n", sr.path);
 
   for (int i = 0; i < sr.count; ++i) {
-    MatchedLine matched_line = sr.lines[i];
+    const MatchedLine matched_line = sr.lines[i];
     fprintf(outfile, "%i: %s", matched_line.line_num, matched_line.line);
   }
 
@@ -75,13 +74,13 @@ void to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
   fclose(outfile);
 }
 
-void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
-  if (rh_ctx.output_filepath == NULL)
+void json_to_file(SearchResult sr, const char *out_file) {
+  if (out_file == NULL)
     fprintf(stderr, "Missing output file path\n");
 
-  FILE *outfile = fopen(rh_ctx.output_filepath, "a");
+  FILE *outfile = fopen(out_file, "a");
   if (outfile == NULL)
-    fprintf(stderr, "Error opening file: %s\n", rh_ctx.output_filepath);
+    fprintf(stderr, "Error opening file: %s\n", out_file);
 
   fprintf(outfile, "{\"path\":\"%s\",", sr.path);
   fprintf(outfile, "\"results\":[");
@@ -111,7 +110,7 @@ void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx) {
   fprintf(outfile, "}\n");
 }
 
-void csv_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
+void csv_to_stdout(SearchResult sr, const char *out_file) {
   for (int i = 0; i < sr.count; ++i) {
     const MatchedLine ml = sr.lines[i];
     remove_newline_chars(ml.line);
@@ -138,13 +137,13 @@ void csv_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx) {
   }
 }
 
-void csv_to_file(SearchResult sr, const ResultHandlerContext rh_ctx) {
-  if (rh_ctx.output_filepath == NULL)
+void csv_to_file(SearchResult sr, const char *out_file) {
+  if (out_file == NULL)
     fprintf(stderr, "Missing output file path\n");
 
-  FILE *outfile = fopen(rh_ctx.output_filepath, "a");
+  FILE *outfile = fopen(out_file, "a");
   if (outfile == NULL)
-    fprintf(stderr, "Error opening file: %s\n", rh_ctx.output_filepath);
+    fprintf(stderr, "Error opening file: %s\n", out_file);
 
   for (int i = 0; i < sr.count; ++i) {
     const MatchedLine ml = sr.lines[i];

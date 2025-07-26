@@ -2,18 +2,19 @@
 #define OUTPUT_HANDLER_H
 
 #include "search_result.h"
-#include "searcher.h"
 
-void to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+// Todo: find a way to avoid pointless 2nd arg or stdout handlers
 
-void json_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+void to_stdout(SearchResult sr, const char *output_filepath);
 
-void to_file(SearchResult sr, ResultHandlerContext rh_ctx);
+void json_to_stdout(SearchResult sr, const char *output_filepath);
 
-void json_to_file(SearchResult sr, ResultHandlerContext rh_ctx);
+void to_file(SearchResult sr, const char *out_file);
 
-void csv_to_stdout(SearchResult sr, ResultHandlerContext rh_ctx);
+void json_to_file(SearchResult sr, const char *out_file);
 
-void csv_to_file(SearchResult sr, ResultHandlerContext rh_ctx);
+void csv_to_stdout(SearchResult sr, const char *output_filepath);
+
+void csv_to_file(SearchResult sr, const char *out_file);
 
 #endif
