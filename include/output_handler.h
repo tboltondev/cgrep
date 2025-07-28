@@ -1,20 +1,16 @@
 #ifndef OUTPUT_HANDLER_H
 #define OUTPUT_HANDLER_H
 
+#include "arg_parser.h"
 #include "search_result.h"
+
+typedef struct {
+  const char *output_filepath;
+  void (*handler)(SearchResult, const char*);
+} OutputHandler;
 
 // Todo: find a way to avoid pointless 2nd arg or stdout handlers
 
-void to_stdout(SearchResult sr, const char *out_file);
-
-void json_to_stdout(SearchResult sr, const char *out_file);
-
-void to_file(SearchResult sr, const char *out_file);
-
-void json_to_file(SearchResult sr, const char *out_file);
-
-void csv_to_stdout(SearchResult sr, const char *out_file);
-
-void csv_to_file(SearchResult sr, const char *out_file);
+int assign_oh(Args args, OutputHandler *oh);
 
 #endif

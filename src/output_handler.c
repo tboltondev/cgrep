@@ -4,6 +4,7 @@
 #include "file_utils.h"
 #include "json_utils.h"
 #include "search_result.h"
+#include "arg_parser.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -170,4 +171,42 @@ void csv_to_file(SearchResult sr, const char *out_file) {
            ml.match_position, ml.match_len);
     }
   }
+}
+
+int assign_oh(const Args args, OutputHandler *oh) {
+  oh->handler = to_stdout;
+
+  if (args.out_file) {
+    oh->handler = to_file;
+    oh->output_filepath = args.out_file;
+
+    if (!truncate_file(oh->output_filepath)) {
+      fprintf(stderr, "Error truncating file: %s\n", oh->output_filepath);
+      return 0;
+    }
+
+    if (args.out_format == OUT_JSON)
+      oh->handler = json_to_file;
+
+    if (args.out_format == OUT_CSV) {
+      FILE *outfile = fopen(oh->output_filepath, "w");
+      if (outfile == NULL) {
+        fprintf(stderr, "Error opening file: %s\n", oh->output_filepath);
+        return 0;
+      }
+
+      // this makes truncate unnecessary
+      fprintf(outfile, "file path, line number, line, match position, match length\n");
+      fclose(outfile);
+
+      oh->handler = csv_to_file;
+    }
+  } else if (args.out_format == OUT_JSON) {
+    oh->handler = json_to_stdout;
+  } else if (args.out_format == OUT_CSV) {
+    fprintf(stdout, "filepath, line number, line, match position, match length\n");
+    oh->handler = csv_to_stdout;
+  }
+
+  return 1;
 }
