@@ -126,7 +126,7 @@ void csv_to_stdout(SearchResult sr, const char *out_file) {
       char quoted_str[qs_len];
 
       // TODO: maybe move into utils
-      snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", quoted_str);
+      snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
 
       printf("%s, %i, %s, %i, %i\n", sr.path, ml.line_num, quoted_str,
              ml.match_position, ml.match_len);
