@@ -165,38 +165,25 @@ void csv_handler(SearchResult sr, const char *out_file) {
 }
 
 int assign_oh(const Args args, OutputHandler *oh) {
-  oh->handler = txt_handler;
+  switch (args.out_format) {
+  case OUT_JSON:
+    oh->handler = json_handler;
+    break;
+  case OUT_CSV:
+    oh->handler = csv_handler;
+    break;
+  case OUT_TXT:
+  default:
+    oh->handler = txt_handler;
+    break;
+  }
 
   if (args.out_file) {
-    oh->handler = txt_handler;
     oh->output_filepath = args.out_file;
-
     if (!truncate_file(oh->output_filepath)) {
       fprintf(stderr, "Error truncating file: %s\n", oh->output_filepath);
-      return 0;
+      return 0;;
     }
-
-    if (args.out_format == OUT_JSON)
-      oh->handler = json_handler;
-
-    if (args.out_format == OUT_CSV) {
-      FILE *outfile = fopen(oh->output_filepath, "w");
-      if (outfile == NULL) {
-        fprintf(stderr, "Error opening file: %s\n", oh->output_filepath);
-        return 0;
-      }
-
-      // this makes truncate unnecessary
-      fprintf(outfile, "file path, line number, line, match position, match length\n");
-      fclose(outfile);
-
-      oh->handler = csv_handler;
-    }
-  } else if (args.out_format == OUT_JSON) {
-    oh->handler = json_handler;
-  } else if (args.out_format == OUT_CSV) {
-    fprintf(stdout, "filepath, line number, line, match position, match length\n");
-    oh->handler = csv_handler;
   }
 
   return 1;
