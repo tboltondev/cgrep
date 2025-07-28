@@ -4,7 +4,7 @@
 #include <string.h>
 
 MatchedLine create_matched_line(const char *line, const size_t match_start, const size_t match_end,
-                                const int line_num) {
+                                const size_t line_num) {
   const size_t line_len = strlen(line) + 1;
 
   const MatchedLine matched_line = {.line = malloc(line_len),
