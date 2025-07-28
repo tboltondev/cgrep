@@ -6,14 +6,14 @@
 
 typedef struct {
   char *line;
-  int line_num;
-  int line_len;
-  int match_position; // should some of these ints be long
-  int match_len;
+  size_t line_num;
+  size_t line_len;
+  size_t match_position;
+  size_t match_len;
 } MatchedLine;
 
 MatchedLine create_matched_line(const char *line, size_t match_start,
-                                size_t match_end, int line_num);
+                                size_t match_end, size_t line_num);
 
 typedef struct {
   char path[PATH_MAX];

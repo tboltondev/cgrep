@@ -5,7 +5,7 @@
 
 MatchedLine create_matched_line(const char *line, const size_t match_start, const size_t match_end,
                                 const int line_num) {
-  const int line_len = strlen(line) + 1;
+  const size_t line_len = strlen(line) + 1;
 
   const MatchedLine matched_line = {.line = malloc(line_len),
                               .line_num = line_num,
@@ -34,7 +34,6 @@ SearchResult create_search_result(const size_t initial_capacity, const char *pat
 void add_to_search_result(SearchResult *sr, const MatchedLine line) {
   if (sr->count == sr->capacity) {
     sr->capacity *= 2;
-    // Todo: should this be using realloc
     sr->lines = realloc(sr->lines, sr->capacity * sizeof(MatchedLine));
   }
   sr->lines[sr->count] = line;
