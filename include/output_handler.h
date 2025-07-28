@@ -9,8 +9,6 @@ typedef struct {
   void (*handler)(SearchResult, const char*);
 } OutputHandler;
 
-// Todo: find a way to avoid pointless 2nd arg or stdout handlers
-
 int assign_oh(Args args, OutputHandler *oh);
 
 #endif
