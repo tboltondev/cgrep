@@ -19,7 +19,7 @@ void txt_handler(SearchResult sr, const char *out_file) {
 
     for (int i = 0; i < sr.count; ++i) {
       const MatchedLine matched_line = sr.lines[i];
-      fprintf(outfile, "%i: %s", matched_line.line_num, matched_line.line);
+      fprintf(outfile, "%lu: %s", matched_line.line_num, matched_line.line);
     }
 
     fprintf(outfile, "\n");
@@ -30,11 +30,11 @@ void txt_handler(SearchResult sr, const char *out_file) {
 
     for (int i = 0; i < sr.count; ++i) {
       const MatchedLine matched = sr.lines[i];
-      printf(ANSI_COLOR_GREEN "%i:", matched.line_num);
+      printf(ANSI_COLOR_GREEN "%lu:", matched.line_num);
       // print line up to first match
-      printf(ANSI_COLOR_RESET "%.*s", matched.match_position, matched.line);
+      printf(ANSI_COLOR_RESET "%.*s", (int)matched.match_position, matched.line);
       // print match
-      printf(ANSI_COLOR_RED "%.*s", matched.match_len,
+      printf(ANSI_COLOR_RED "%.*s", (int)matched.match_len,
              &matched.line[matched.match_position]);
       // print remainder of line
       printf(ANSI_COLOR_RESET "%s",
@@ -64,9 +64,9 @@ void json_handler (SearchResult sr, const char *out_file) {
       fprintf(outfile,
               "{"
               "\"line\":\"%s\","
-              "\"line_number\":%d,"
-              "\"match_position\":%d,"
-              "\"match_length\":%d"
+              "\"line_number\":%lu,"
+              "\"match_position\":%lu,"
+              "\"match_length\":%lu"
               "}",
               escaped_str, sr.lines[i].line_num, sr.lines[i].match_position + 1,
               sr.lines[i].match_len);
@@ -90,9 +90,9 @@ void json_handler (SearchResult sr, const char *out_file) {
 
       printf("{"
              "\"line\":\"%s\","
-             "\"line_number\":%d,"
-             "\"match_position\":%d,"
-             "\"match_length\":%d"
+             "\"line_number\":%lu,"
+             "\"match_position\":%lu,"
+             "\"match_length\":%lu"
              "}",
              escaped_str, ml.line_num, ml.match_position + 1,
              ml.match_len);
@@ -105,6 +105,7 @@ void json_handler (SearchResult sr, const char *out_file) {
   }
 }
 
+// Todo: fix csv headers
 void csv_handler(SearchResult sr, const char *out_file) {
   if (out_file != NULL) {
     FILE* outfile = fopen(out_file, "a");
@@ -129,10 +130,11 @@ void csv_handler(SearchResult sr, const char *out_file) {
         // TODO: maybe move into utils
         snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
 
-        fprintf(outfile, "%s, %i, %s, %i, %i\n", sr.path, ml.line_num, quoted_str,
+        // Todo: str format types
+        fprintf(outfile, "%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, quoted_str,
                 ml.match_position, ml.match_len);
       } else {
-        fprintf(outfile, "%s, %i, %s, %i, %i\n", sr.path, ml.line_num, escaped_str,
+        fprintf(outfile, "%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, escaped_str,
                 ml.match_position, ml.match_len);
       }
     }
@@ -154,10 +156,10 @@ void csv_handler(SearchResult sr, const char *out_file) {
         // TODO: maybe move into utils
         snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
 
-        printf("%s, %i, %s, %i, %i\n", sr.path, ml.line_num, quoted_str,
+        printf("%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, quoted_str,
                ml.match_position, ml.match_len);
       } else {
-        printf("%s, %i, %s, %i, %i\n", sr.path, ml.line_num, escaped_str,
+        printf("%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, escaped_str,
                ml.match_position, ml.match_len);
       }
     }
