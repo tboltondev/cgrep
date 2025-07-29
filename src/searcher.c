@@ -1,6 +1,7 @@
 #include "searcher.h"
 #include "file_utils.h"
 #include "search_result.h"
+#include "exit_status.h"
 #include <dirent.h>
 #include <regex.h>
 #include <stdio.h>
@@ -8,7 +9,7 @@
 
 #define MAX_LINE_SIZE (300 * sizeof(char))
 
-SearchStatus search_file(SearchResult *sr, const char *pattern,
+ExitStatus search_file(SearchResult *sr, const char *pattern,
                          const char *path) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
@@ -41,10 +42,10 @@ SearchStatus search_file(SearchResult *sr, const char *pattern,
   return SEARCH_SUCCESS;
 }
 
-SearchStatus handle_search_file(const char *pattern, const char *path, const OutputHandler output_handler) {
+ExitStatus handle_search_file(const char *pattern, const char *path, const OutputHandler output_handler) {
   SearchResult sr = create_search_result(10, path);
 
-  const SearchStatus status = search_file(&sr, pattern, path);
+  const ExitStatus status = search_file(&sr, pattern, path);
 
   if (sr.count > 0)
     output_handler.handler(sr, output_handler.output_filepath);
@@ -53,7 +54,7 @@ SearchStatus handle_search_file(const char *pattern, const char *path, const Out
   return status;
 }
 
-SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
+ExitStatus search_dir_recursively(const char *pattern, const char *base_path,
                                     const OutputHandler output_handler,
                                     const int current_depth, const int max_depth) {
   if (current_depth > max_depth) {
@@ -89,7 +90,7 @@ SearchStatus search_dir_recursively(const char *pattern, const char *base_path,
   return SEARCH_SUCCESS;
 }
 
-SearchStatus search(const char *pattern, const char *path, const OutputHandler output_handler) {
+ExitStatus search(const char *pattern, const char *path, const OutputHandler output_handler) {
   // TODO: user flag to override this
   const int MAX_DEPTH = 1000;
 

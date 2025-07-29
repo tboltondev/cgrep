@@ -1,5 +1,5 @@
-#ifndef RESULT_STATUS_H
-#define RESULT_STATUS_H
+#ifndef EXIT_STATUS_H
+#define EXIT_STATUS_H
 
 typedef enum {
     SEARCH_SUCCESS = 0,
@@ -8,6 +8,6 @@ typedef enum {
     REGEX_COMPILATION_ERR,
     ARG_PARSE_ERR,
     MEM_ALLOC_ERR,
-} SearchStatus;
+} ExitStatus;
 
 #endif

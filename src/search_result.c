@@ -1,5 +1,5 @@
 #include "search_result.h"
-#include "search_status.h"
+#include "exit_status.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
