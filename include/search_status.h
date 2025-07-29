@@ -6,7 +6,8 @@ typedef enum {
     FILE_READ_ERR,
     MAX_DIR_DEPTH_ERR,
     REGEX_COMPILATION_ERR,
-    ARG_PARSE_ERR
+    ARG_PARSE_ERR,
+    MEM_ALLOC_ERR,
 } SearchStatus;
 
 #endif

@@ -1,4 +1,5 @@
 #include "search_result.h"
+#include "search_status.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,8 +23,13 @@ MatchedLine create_matched_line(const char *line, const size_t match_start, cons
 void free_matched_line(const MatchedLine *matched_line) { free(matched_line->line); }
 
 SearchResult create_search_result(const size_t initial_capacity, const char *path) {
+  MatchedLine *lines = malloc(initial_capacity * sizeof(MatchedLine));
+  if (lines == NULL) {
+    fprintf(stderr, "Malloc failed creating search result.\n");
+    exit(MEM_ALLOC_ERR);
+  }
   SearchResult search_result = {
-      .lines = malloc(initial_capacity * sizeof(MatchedLine)),
+      .lines = lines,
       .count = 0,
       .capacity = initial_capacity};
 
@@ -38,9 +44,9 @@ void add_to_search_result(SearchResult *sr, const MatchedLine line) {
     MatchedLine *temp = realloc(sr->lines, sr->capacity * sizeof(MatchedLine));
     if (temp == NULL) {
       fprintf(stderr, "Realloc failed adding to search result.\n");
-    } else {
-      sr->lines = temp;
+      exit(MEM_ALLOC_ERR);
     }
+    sr->lines = temp;
   }
   sr->lines[sr->count] = line;
   sr->count++;
