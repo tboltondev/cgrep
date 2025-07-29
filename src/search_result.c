@@ -1,5 +1,6 @@
 #include "search_result.h"
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -34,7 +35,12 @@ SearchResult create_search_result(const size_t initial_capacity, const char *pat
 void add_to_search_result(SearchResult *sr, const MatchedLine line) {
   if (sr->count == sr->capacity) {
     sr->capacity *= 2;
-    sr->lines = realloc(sr->lines, sr->capacity * sizeof(MatchedLine));
+    MatchedLine *temp = realloc(sr->lines, sr->capacity * sizeof(MatchedLine));
+    if (temp == NULL) {
+      fprintf(stderr, "Realloc failed adding to search result.\n");
+    } else {
+      sr->lines = temp;
+    }
   }
   sr->lines[sr->count] = line;
   sr->count++;
