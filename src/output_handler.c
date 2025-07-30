@@ -154,22 +154,43 @@ int assign_oh(const Args args, OutputHandler *oh) {
   switch (args.out_format) {
   case OUT_JSON:
     oh->handler = json_handler;
+    if (args.out_file) {
+      oh->output_filepath = args.out_file;
+      if (!truncate_file(oh->output_filepath)) {
+        fprintf(stderr, "Error truncating file: %s\n", oh->output_filepath);
+        exit(FILE_READ_ERR);
+      }
+    }
     break;
   case OUT_CSV:
     oh->handler = csv_handler;
+    FILE *out = stdout;
+    bool opened_file = false;
+
+    if (args.out_file) {
+      oh->output_filepath = args.out_file;
+      FILE* open = fopen(args.out_file, "w");
+      if (open == NULL) {
+        fprintf(stderr, "Error opening output file: %s\n", args.out_file);
+        exit(FILE_READ_ERR);
+      }
+      out = open;
+      opened_file = true;
+    }
+    fprintf(out, "file path, line number, line, match position, match length\n");
+    if (opened_file) fclose(out);
     break;
   case OUT_TXT:
   default:
     oh->handler = txt_handler;
-    break;
-  }
-
-  if (args.out_file) {
-    oh->output_filepath = args.out_file;
-    if (!truncate_file(oh->output_filepath)) {
-      fprintf(stderr, "Error truncating file: %s\n", oh->output_filepath);
-      return 0;;
+    if (args.out_file) {
+      oh->output_filepath = args.out_file;
+      if (!truncate_file(oh->output_filepath)) {
+        fprintf(stderr, "Error truncating file: %s\n", oh->output_filepath);
+        exit(FILE_READ_ERR);
+      }
     }
+    break;
   }
 
   return 1;
