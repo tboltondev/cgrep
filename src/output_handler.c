@@ -5,9 +5,12 @@
 #include "json_utils.h"
 #include "search_result.h"
 #include "arg_parser.h"
+#include "exit_status.h"
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 void txt_handler(SearchResult sr, const char *out_file) {
   if (out_file != NULL) {
@@ -105,65 +108,46 @@ void json_handler (SearchResult sr, const char *out_file) {
   }
 }
 
-// Todo: fix csv headers
 void csv_handler(SearchResult sr, const char *out_file) {
+  FILE *out = stdout;
+  bool opened_file = false;
+
   if (out_file != NULL) {
-    FILE* outfile = fopen(out_file, "a");
-    if (outfile == NULL)
+    FILE *open = fopen(out_file, "a");
+    if (open == NULL) {
       fprintf(stderr, "Error opening file: %s\n", out_file);
-
-    for (int i = 0; i < sr.count; ++i) {
-      const MatchedLine ml = sr.lines[i];
-
-      remove_newline_chars(ml.line);
-
-      // could do this only if csv_count_escape_chars > 0
-      size_t num_quotes = csv_count_quotes(ml.line);
-      char escaped_str[strlen(ml.line) + num_quotes + 1];
-      csv_str_escape(ml.line, escaped_str);
-
-      if (needs_quotes(escaped_str)) {
-        const size_t esc_len = strlen(escaped_str);
-        const size_t qs_len = esc_len + 3;
-        char quoted_str[qs_len];
-
-        // TODO: maybe move into utils
-        snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
-
-        // Todo: str format types
-        fprintf(outfile, "%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, quoted_str,
-                ml.match_position, ml.match_len);
-      } else {
-        fprintf(outfile, "%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, escaped_str,
-                ml.match_position, ml.match_len);
-      }
-    }
-  } else {
-    for (int i = 0; i < sr.count; ++i) {
-      const MatchedLine ml = sr.lines[i];
-      remove_newline_chars(ml.line);
-
-      // could do this only if csv_count_escape_chars > 0
-      size_t num_quotes = csv_count_quotes(ml.line);
-      char escaped_str[strlen(ml.line) + num_quotes + 1];
-      csv_str_escape(ml.line, escaped_str);
-
-      if (needs_quotes(escaped_str)) {
-        const size_t esc_len = strlen(escaped_str);
-        const size_t qs_len = esc_len + 3;
-        char quoted_str[qs_len];
-
-        // TODO: maybe move into utils
-        snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
-
-        printf("%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, quoted_str,
-               ml.match_position, ml.match_len);
-      } else {
-        printf("%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, escaped_str,
-               ml.match_position, ml.match_len);
-      }
+    } else {
+      out = open;
+      opened_file = true;
     }
   }
+
+  for (int i = 0; i < sr.count; ++i) {
+    const MatchedLine ml = sr.lines[i];
+    remove_newline_chars(ml.line);
+
+    // could do this only if csv_count_escape_chars > 0
+    size_t num_quotes = csv_count_quotes(ml.line);
+    char escaped_str[strlen(ml.line) + num_quotes + 1];
+    csv_str_escape(ml.line, escaped_str);
+
+    if (needs_quotes(escaped_str)) {
+      const size_t esc_len = strlen(escaped_str);
+      const size_t qs_len = esc_len + 3;
+      char quoted_str[qs_len];
+
+      // TODO: maybe move into utils
+      snprintf(quoted_str, sizeof(quoted_str), "\"%s\"", escaped_str);
+
+      fprintf(out, "%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, quoted_str,
+              ml.match_position, ml.match_len);
+    } else {
+      fprintf(out, "%s, %lu, %s, %lu, %lu\n", sr.path, ml.line_num, escaped_str,
+              ml.match_position, ml.match_len);
+    }
+  }
+
+  if (opened_file) fclose(out);
 }
 
 int assign_oh(const Args args, OutputHandler *oh) {
