@@ -12,39 +12,40 @@
 #include <string.h>
 #include <stdbool.h>
 
-void txt_handler(SearchResult sr, const char *out_file) {
+void txt_handler(const SearchResult sr, const char *out_file) {
+  FILE *out = stdout;
+  bool opened_file = false;
+
   if (out_file != NULL) {
-    FILE* outfile = fopen(out_file, "a");
-    if (outfile == NULL)
+    FILE *open = fopen(out_file, "a");
+    if (open == NULL) {
       fprintf(stderr, "Error opening file: %s\n", out_file);
-
-    fprintf(outfile, "%s\n", sr.path);
-
-    for (int i = 0; i < sr.count; ++i) {
-      const MatchedLine matched_line = sr.lines[i];
-      fprintf(outfile, "%lu: %s", matched_line.line_num, matched_line.line);
+    } else {
+      out = open;
+      opened_file = true;
     }
-
-    fprintf(outfile, "\n");
-
-    fclose(outfile);
-  } else {
-    printf(ANSI_COLOR_MAGENTA "%s\n" ANSI_COLOR_RESET, sr.path);
-
-    for (int i = 0; i < sr.count; ++i) {
-      const MatchedLine matched = sr.lines[i];
-      printf(ANSI_COLOR_GREEN "%lu:", matched.line_num);
-      // print line up to first match
-      printf(ANSI_COLOR_RESET "%.*s", (int)matched.match_position, matched.line);
-      // print match
-      printf(ANSI_COLOR_RED "%.*s", (int)matched.match_len,
-             &matched.line[matched.match_position]);
-      // print remainder of line
-      printf(ANSI_COLOR_RESET "%s",
-             &matched.line[matched.match_position + matched.match_len]);
-    }
-    printf("\n");
   }
+
+  for (int i = 0; i < sr.count; ++i) {
+    const MatchedLine matched = sr.lines[i];
+    if (out_file != NULL) {
+      fprintf(out, "%lu: %s", matched.line_num, matched.line);
+    } else {
+      fprintf(out, ANSI_COLOR_GREEN "%lu:", matched.line_num);
+      // print line up to first match
+      fprintf(out, ANSI_COLOR_RESET "%.*s", (int)matched.match_position, matched.line);
+      // print match
+      fprintf(out, ANSI_COLOR_RED "%.*s", (int)matched.match_len,
+              &matched.line[matched.match_position]);
+      // print remainder of line
+      fprintf(out, ANSI_COLOR_RESET "%s",
+              &matched.line[matched.match_position + matched.match_len]);
+    }
+  }
+
+  fprintf(out, "\n");
+
+  if (opened_file) fclose(out);
 }
 
 void json_handler (const SearchResult sr, const char *out_file) {
