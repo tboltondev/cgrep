@@ -47,65 +47,48 @@ void txt_handler(SearchResult sr, const char *out_file) {
   }
 }
 
-void json_handler (SearchResult sr, const char *out_file) {
+void json_handler (const SearchResult sr, const char *out_file) {
+  FILE *out = stdout;
+  bool opened_file = false;
+
   if (out_file != NULL) {
-    FILE* outfile = fopen(out_file, "a");
-    if (outfile == NULL)
+    FILE *open = fopen(out_file, "a");
+    if (open == NULL) {
       fprintf(stderr, "Error opening file: %s\n", out_file);
-
-    fprintf(outfile, "{\"path\":\"%s\",", sr.path);
-    fprintf(outfile, "\"results\":[");
-
-    for (int i = 0; i < sr.count; ++i) {
-      char* line = sr.lines[i].line;
-      remove_newline_chars(line);
-
-      int esc_chars_count = json_count_escape_chars(line);
-      char escaped_str[strlen(line) + esc_chars_count + 1];
-      json_str_escape(line, escaped_str);
-
-      fprintf(outfile,
-              "{"
-              "\"line\":\"%s\","
-              "\"line_number\":%lu,"
-              "\"match_position\":%lu,"
-              "\"match_length\":%lu"
-              "}",
-              escaped_str, sr.lines[i].line_num, sr.lines[i].match_position + 1,
-              sr.lines[i].match_len);
-      if (i != sr.count - 1)
-        fprintf(outfile, ",");
+    } else {
+      out = open;
+      opened_file = true;
     }
-
-    fprintf(outfile, "]");
-    fprintf(outfile, "}\n");
-  } else {
-    printf("{\"path\":\"%s\",", sr.path);
-    printf("\"results\":[");
-
-    for (int i = 0; i < sr.count; ++i) {
-      const MatchedLine ml = sr.lines[i];
-      remove_newline_chars(ml.line);
-
-      int esc_chars_count = json_count_escape_chars(ml.line);
-      char escaped_str[strlen(ml.line) + esc_chars_count + 1];
-      json_str_escape(ml.line, escaped_str);
-
-      printf("{"
-             "\"line\":\"%s\","
-             "\"line_number\":%lu,"
-             "\"match_position\":%lu,"
-             "\"match_length\":%lu"
-             "}",
-             escaped_str, ml.line_num, ml.match_position + 1,
-             ml.match_len);
-      if (i != sr.count - 1)
-        printf(",");
-    }
-
-    printf("]");
-    printf("}\n");
   }
+
+  fprintf(out, "{\"path\":\"%s\",", sr.path);
+  fprintf(out, "\"results\":[");
+
+  for (int i = 0; i < sr.count; ++i) {
+    const MatchedLine ml = sr.lines[i];
+    remove_newline_chars(ml.line);
+
+    int esc_chars_count = json_count_escape_chars(ml.line);
+    char escaped_str[strlen(ml.line) + esc_chars_count + 1];
+    json_str_escape(ml.line, escaped_str);
+
+    fprintf(out,
+            "{"
+            "\"line\":\"%s\","
+            "\"line_number\":%lu,"
+            "\"match_position\":%lu,"
+            "\"match_length\":%lu"
+            "}",
+            escaped_str, ml.line_num, ml.match_position + 1,
+            ml.match_len);
+    if (i != sr.count - 1)
+      fprintf(out, ",");
+  }
+
+  fprintf(out, "]");
+  fprintf(out, "}\n");
+
+  if (opened_file) fclose(out);
 }
 
 void csv_handler(SearchResult sr, const char *out_file) {
