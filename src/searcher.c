@@ -9,6 +9,7 @@
 
 #define MAX_LINE_SIZE (300 * sizeof(char))
 
+// TODO: evaluate usage of ExitStatus
 ExitStatus search_file(SearchResult *sr, const char *pattern,
                          const char *path) {
   FILE *file = fopen(path, "r");
