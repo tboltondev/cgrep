@@ -1,4 +1,4 @@
-#include "../include/file_utils.h"
+#include "file_utils.h"
 #include <stdio.h>
 #include <sys/stat.h>
 
@@ -20,10 +20,20 @@ int is_file(const char *path) {
   return S_ISREG(statbuf.st_mode);
 }
 
-void remove_newlines(char *str) {
+void remove_newline_chars(char *str) {
   while (*str) {
     if (*str == '\n')
       *str = '\0';
     str++;
   }
+}
+
+int truncate_file(const char *path) {
+  FILE *fp = fopen(path, "w");
+  if (fp == NULL) {
+    fprintf(stderr, "Error opening file: %s\n", path);
+    return 0;
+  }
+  fclose(fp);
+  return 1;
 }

@@ -1,10 +1,14 @@
 #ifndef OUTPUT_HANDLER_H
 #define OUTPUT_HANDLER_H
 
+#include "arg_parser.h"
 #include "search_result.h"
 
-void to_stdout(SearchResult sr);
+typedef struct {
+  const char *output_filepath;
+  void (*handler)(SearchResult, const char*);
+} OutputHandler;
 
-void json_stdout(SearchResult sr);
+int assign_oh(Args args, OutputHandler *oh);
 
 #endif

@@ -2,18 +2,18 @@
 #define SEARCH_RESULT_H
 
 #include <stddef.h>
-#include <sys/syslimits.h>
+#include <limits.h>
 
 typedef struct {
   char *line;
-  int line_num;
-  int line_len;
-  int match_position; // should some of these ints be long
-  int match_len;
+  size_t line_num;
+  size_t line_len;
+  size_t match_position;
+  size_t match_len;
 } MatchedLine;
 
-MatchedLine create_matched_line(char *line, size_t match_start, size_t match_end,
-                                int line_num);
+MatchedLine create_matched_line(const char *line, size_t match_start,
+                                size_t match_end, size_t line_num);
 
 typedef struct {
   char path[PATH_MAX];
@@ -26,8 +26,6 @@ SearchResult create_search_result(size_t initial_capacity, const char *path);
 
 void add_to_search_result(SearchResult *sr, MatchedLine line);
 
-void print_search_result(SearchResult sr);
-
-void free_search_result(SearchResult *sr);
+void free_search_result(const SearchResult *sr);
 
 #endif
